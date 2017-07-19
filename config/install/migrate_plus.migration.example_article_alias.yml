@@ -79,3 +79,7 @@ process:
   # In our case, we simply hard-code it to "und" as in "Undefined". This is important! A value must be provided for
   # this property, otherwise, you will get errors while running the migration.
   langcode: constants/und
+# Migration dependencies
+migration_dependencies:
+  required:
+    - example_article_data

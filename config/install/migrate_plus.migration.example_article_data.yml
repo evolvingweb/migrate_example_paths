@@ -24,6 +24,7 @@ source:
     slug: 'Unique slug for URLs.'
     heading: 'Title of the article.'
     content: 'Body of the article.'
+  # Constants.
   constants:
     basic_html: basic_html
     path_prefix: '/article/'

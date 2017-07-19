@@ -77,3 +77,7 @@ process:
   uid: constants/uid_admin
   # We want to generate 301 permanent redirects as opposed to 302 temporary redirects.
   status_code: constants/status_code
+# Migration dependencies
+migration_dependencies:
+  required:
+    - example_article_data
