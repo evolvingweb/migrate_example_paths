@@ -1,0 +1,43 @@
+# Migrates article data from CSV file.
+#
+# This migration migrates the content from a CSV (provided by the client) to generate "article" nodes in Drupal 8.
+
+# Migration metadata
+id: example_article_data
+title: Article data
+migration_group: example_article
+migration_tags:
+  - node
+  - blog
+  # This tag will be used for computing the source CSV path.
+  - migrate-example-paths
+# Migration source
+source:
+  plugin: csv
+  path: blog.csv
+  header_row_count: 1
+  # "slug" is the only unique identifier in the source CSV.
+  keys:
+    - slug
+  # Field descriptions.
+  fields:
+    slug: 'Unique slug for URLs.'
+    heading: 'Title of the article.'
+    content: 'Body of the article.'
+  constants:
+    basic_html: basic_html
+    path_prefix: '/article/'
+# Migration destination
+destination:
+  plugin: 'entity:node'
+  default_bundle: article
+# Migration processes
+process:
+  title: heading
+  body/format: constants/basic_html
+  body/value: content
+  path:
+    plugin: concat
+    source:
+      - constants/path_prefix
+      - slug
