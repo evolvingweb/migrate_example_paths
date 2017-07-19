@@ -1,0 +1,81 @@
+# Generates additional aliases for articles.
+#
+# We created "/article/SLUG" type aliases in the "example_article_data" migration. Now, what if we want to have some
+# additional aliases pointing to the same nodes such that the nodes are available at two different paths. Say for some
+# reason we need to generate aliases in a separate migration! Maybe because the logic for creating URL aliases is
+# a bit more complex? Say, for example, we need to migrate some taxonomy terms first and then use the results of that
+# migration to generate URL aliases like, "/blog/category-id/article-slug".
+#
+# This migration will generate URL aliases and point them to the nodes we generated in the "article_data" migration.
+# More precisely, we will make "/article/slug.htm" point to the article.
+
+# Migration metadata
+id: example_article_alias
+title: Article aliases
+migration_group: example_article
+migration_tags:
+  - url-alias
+  # This tag will be used for computing the source CSV path.
+  - migrate-example-paths
+# Migration source
+#
+# We will read the data we have in the source CSV file provided with this example. However, if you are migrating from
+# and older version of Drupal, you can use the "d6_url_alias" or "d7_url_alias" plugins provided by the "path" module.
+source:
+  plugin: csv
+  path: blog.csv
+  header_row_count: 1
+  # "slug" is the only unique identifier in the source CSV.
+  keys:
+    - slug
+  # Field descriptions
+  fields:
+    slug: 'Unique slug for URLs.'
+    heading: 'Title of the article.'
+    content: 'Body of the article.'
+  # Constants
+  constants:
+    basic_html: basic_html
+    source_prefix: '/node/'
+    alias_prefix: '/article/'
+    alias_suffix: '.htm'
+    und: und
+# Migration destination
+#
+# Since we want to create URL aliases, we need to use the destination plugin "url_alias" provided by the "path" module.
+# Taking a quick look at the plugin source at Drupal\path\Plugin\migrate\destination\UrlAlias::fields(), we can figure
+# out the fields supported by this plugin.
+destination:
+  plugin: url_alias
+# Migration processes
+process:
+  # Figure out the ID of the corresponding node.
+  #
+  # Since this field will just be used for computing another property, I have prefixed it with "temp_".
+  temp_nid:
+    plugin: migration_lookup
+    source: slug
+    migration: example_article_data
+  # Specify the actual path to which are want to define an alias.
+  #
+  # We want to point to "/node/NID", so we generate that by concatenating various properties.
+  source:
+    plugin: concat
+    source:
+      - constants/source_prefix
+      - @temp_nid
+  # Specify the alias which should point to the "source" specified above.
+  #
+  # If you don't know what aliases are this tutorial might not be for you. Please read about the "path" module to
+  # learn more about paths and aliases in Drupal.
+  alias:
+    plugin: concat
+    source:
+      - constants/alias_prefix
+      - slug
+      - constants/alias_suffix
+  # All URL aliases need to specify a language.
+  #
+  # In our case, we simply hard-code it to "und" as in "Undefined". This is important! A value must be provided for
+  # this property, otherwise, you will get errors while running the migration.
+  langcode: constants/und
