@@ -1,0 +1,79 @@
+# Generates redirects for articles.
+#
+# Say, the articles we migrated were located at "/blog/SLUG.php" in the legacy site. In the new site, they will be
+# accessible at "/node/NID". If we do not do anything with the legacy paths, the old paths will throw "404 Not Found"
+# messages at anyone who tries to visit an article at its old path. Getting 404 errors is bad for SEO and reduces our
+# website's ranking in various search engines. Thus, we create "301 Moved Permanently" redirects, to map every old
+# path to it's equivalent path in Drupal 8.
+#
+# This migration will generate redirects from "/blog/SLUG.php" to the corresponding node page in the Drupal 8 site.
+
+# Migration metadata
+id: example_article_redirect
+title: Article redirects
+migration_group: example_article
+migration_tags:
+  - redirect
+  # This tag will be used for computing the source CSV path.
+  - migrate-example-paths
+# Migration source
+#
+# We will read the data we have in the source CSV file provided with this example. However, if you are migrating from
+# and older version of Drupal, you can use the "d6_path_redirect" plugin provided by the "redirect" module.
+source:
+  plugin: csv
+  path: blog.csv
+  header_row_count: 1
+  # "slug" is the only unique identifier in the source CSV.
+  keys:
+    - slug
+  # Field descriptions
+  fields:
+    slug: 'Unique slug for URLs.'
+    heading: 'Title of the article.'
+    content: 'Body of the article.'
+  # Constants
+  constants:
+    basic_html: basic_html
+    # The source path is not supposed to start with a "/".
+    source_prefix: 'blog/'
+    source_suffix: '.php'
+    redirect_prefix: 'internal:/node/'
+    uid_admin: 1
+    status_code: 301
+# Migration destination
+#
+# In Drupal 8, every redirect rule is an entity. Hence, we use the "entity" plugin as the destination.
+destination:
+  plugin: 'entity:redirect'
+# Migration processes
+process:
+  # Figure out the ID of the corresponding node.
+  #
+  # Since this field will just be used for computing another property, I have prefixed it with "temp_".
+  temp_nid:
+    plugin: migration_lookup
+    source: slug
+    migration: example_article_data
+  # Specify the path which is to be redirected.
+  #
+  # This will be the path as on the old website, example, "blog/SLUG.php" without a "/" in the front.
+  redirect_source:
+    plugin: concat
+    source:
+      - constants/source_prefix
+      - slug
+      - constants/source_suffix
+  # The redirect destination is supposed be a URI of the form "internal:/node/NID".
+  #
+  # The URI will be used by the redirect module to get the respective path alias for the node. Even if the alias
+  # changes sometime in the future, the redirect will start pointing to the new alias instead of breaking.
+  redirect_redirect:
+    plugin: concat
+    source:
+      - constants/redirect_prefix
+      - @temp_nid
+  # We want the redirects to be created as if the admin had created them.
+  uid: constants/uid_admin
+  # We want to generate 301 permanent redirects as opposed to 302 temporary redirects.
+  status_code: constants/status_code
