@@ -1,0 +1,6 @@
+# Migration group
+id: example_article
+label: Example: Article
+description: 'Example migrations on migration URL aliases and URL redirects.'
+source_type: CSV
+module: migrate_example_paths
