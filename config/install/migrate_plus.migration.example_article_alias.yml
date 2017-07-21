@@ -7,7 +7,7 @@
 
 # Migration metadata
 id: example_article_alias
-title: Article aliases
+label: Article aliases
 migration_group: example_article
 migration_tags:
   - url-alias

@@ -10,7 +10,7 @@
 
 # Migration metadata
 id: example_article_redirect
-title: Article redirects
+label: Article redirects
 migration_group: example_article
 migration_tags:
   - redirect

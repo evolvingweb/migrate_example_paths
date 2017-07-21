@@ -4,7 +4,7 @@
 
 # Migration metadata
 id: example_category_data
-title: Category data
+label: Category data
 migration_group: example_article
 migration_tags:
   - taxonomy-term

@@ -4,7 +4,7 @@
 
 # Migration metadata
 id: example_article_data
-title: Article data
+label: Article data
 migration_group: example_article
 migration_tags:
   - node
