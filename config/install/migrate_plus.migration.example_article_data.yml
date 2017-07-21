@@ -21,9 +21,10 @@ source:
     - slug
   # Field descriptions.
   fields:
-    slug: 'Unique slug for URLs.'
-    heading: 'Title of the article.'
-    content: 'Body of the article.'
+    slug: 'Unique URL slug.'
+    heading: 'Title.'
+    content: 'Body.'
+    category: 'Category ID.'
   # Constants.
   constants:
     basic_html: basic_html
@@ -37,8 +38,13 @@ process:
   title: heading
   body/format: constants/basic_html
   body/value: content
-  path:
-    plugin: concat
-    source:
-      - constants/path_prefix
-      - slug
+  # Associate the article to the category created during the "example_category_data" migration.
+  field_category:
+    plugin: migration_lookup
+    source: category
+    migration: example_category_data
+    no_stub: true
+# Migration dependencies
+migration_depedencies:
+  required:
+    - example_category_data

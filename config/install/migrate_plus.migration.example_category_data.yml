@@ -1,0 +1,45 @@
+# Migrates category data from CSV file.
+#
+# This migration migrates the content from a CSV (provided by the client) to generate taxonomy terms in Drupal 8.
+
+# Migration metadata
+id: example_category_data
+title: Category data
+migration_group: example_article
+migration_tags:
+  - blog
+  - category
+  # This tag will be used for computing the source CSV path.
+  - migrate-example-paths
+# Migration source
+source:
+  plugin: csv
+  path: category.csv
+  header_row_count: 1
+  # "slug" is the only unique identifier in the source CSV.
+  keys:
+    - cid
+  # Field descriptions.
+  fields:
+    cid: 'Category ID.'
+    title: 'Title.'
+  # Constants.
+  constants:
+    path_prefix: '/blog/'
+# Migration destination
+destination:
+  plugin: 'entity:taxonomy_term'
+  default_bundle: categories
+# Migration processes
+process:
+  name: title
+  # Generate a URL friendly slug for the category.
+  temp_slug:
+    plugin: machine_name
+    source: title
+  # Generate a URL like "/blog/{{ category-slug }}" where all articles in the category will be listed.
+  path:
+    plugin: concat
+    source:
+      - constants/path_prefix
+      - @temp_slug
