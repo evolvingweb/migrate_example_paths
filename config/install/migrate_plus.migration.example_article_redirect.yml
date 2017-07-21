@@ -1,10 +1,10 @@
 # Generates redirects for articles.
 #
-# Say, the articles we migrated were located at "/blog/SLUG.php" in the legacy site. In the new site, they will be
-# accessible at "/node/NID". If we do not do anything with the legacy paths, the old paths will throw "404 Not Found"
-# messages at anyone who tries to visit an article at its old path. Getting 404 errors is bad for SEO and reduces our
-# website's ranking in various search engines. Thus, we create "301 Moved Permanently" redirects, to map every old
-# path to it's equivalent path in Drupal 8.
+# The articles we migrated were located at "/blog/{{ article-slug }}.php" in the legacy site. In the new site, they
+# will be accessible at "/article/{{ category-slug }}/{{ article-slug }}". If we do not do anything with the legacy
+# paths, the old paths will throw "404 Not Found" messages at anyone who tries to visit an article at its old path.
+# Getting 404 errors is bad for SEO and reduces our website's ranking in various search engines. Thus, we create
+# "301 Moved Permanently" redirects, to map every old path to it's equivalent path in Drupal 8.
 #
 # This migration will generate redirects from "/blog/SLUG.php" to the corresponding node page in the Drupal 8 site.
 
@@ -34,7 +34,6 @@ source:
     content: 'Body of the article.'
   # Constants
   constants:
-    basic_html: basic_html
     # The source path is not supposed to start with a "/".
     source_prefix: 'blog/'
     source_suffix: '.php'

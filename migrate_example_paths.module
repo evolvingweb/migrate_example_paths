@@ -19,3 +19,28 @@ function migrate_example_paths_migration_plugins_alter(array &$migrations) {
     }
   }
 }
+
+/**
+ * Get taxonomy term name by taxonomy ID.
+ *
+ * Coming across the "entity_lookup" plugin, I thought it would have the
+ * ability to "lookup" an existing entity and let me extract the "name" of the
+ * taxonomy term with the "extract" plugin. But the "entity_lookup" plugin
+ * actually returns the ID of the entity being looked up. Maybe we could extend
+ * it to have the ability to load the entity and return it as an array?
+ *
+ * But for this example, we need the taxonomy term name to generate it's "slug"
+ * so we will simply use a quick custom callback to read term names.
+ *
+ * @param tid
+ *   Taxonomy term ID.
+ *
+ * @return string|null
+ *   Taxonomy term name.
+ */
+function _migrate_example_paths_load_taxonomy_term_name($tid) {
+  $term = Drupal\taxonomy\Entity\Term::load($tid);
+  if ($term) {
+    return $term->getName();
+  }
+}

@@ -1,13 +1,9 @@
 # Generates additional aliases for articles.
 #
-# We created "/article/SLUG" type aliases in the "example_article_data" migration. Now, what if we want to have some
-# additional aliases pointing to the same nodes such that the nodes are available at two different paths. Say for some
-# reason we need to generate aliases in a separate migration! Maybe because the logic for creating URL aliases is
-# a bit more complex? Say, for example, we need to migrate some taxonomy terms first and then use the results of that
-# migration to generate URL aliases like, "/blog/category-id/article-slug".
-#
-# This migration will generate URL aliases and point them to the nodes we generated in the "article_data" migration.
-# More precisely, we will make "/article/slug.htm" point to the article.
+# We usually migrate node aliases along with node data. Say, for some reason, we want to generate URL aliases in a
+# stand-alone migration. This example does exactly that. It uses the category_data migration and the article_data
+# migrations and creates URL aliases of the form "/blog/{{ category-slug }}/{{ article-slug }}", which point to the
+# articles we migrated in the "article_data" migration.
 
 # Migration metadata
 id: example_article_alias
@@ -35,10 +31,9 @@ source:
     content: 'Body of the article.'
   # Constants
   constants:
-    basic_html: basic_html
+    slash: '/'
     source_prefix: '/node/'
-    alias_prefix: '/article/'
-    alias_suffix: '.htm'
+    alias_prefix: '/blog/'
     und: und
 # Migration destination
 #
@@ -64,6 +59,20 @@ process:
     source:
       - constants/source_prefix
       - @temp_nid
+  # Load category data to generate the "category-slug", which is like a URL friendly version of the category name.
+  temp_category_slug:
+    # First, retrieve the ID of the taxonomy term created during the "category_data" migration.
+    -
+      plugin: migration_lookup
+      source: category
+      migration: example_category_data
+    # Use a custom callback to get the category name.
+    -
+      plugin: callback
+      callable: _migrate_example_paths_load_taxonomy_term_name
+    # Prepare a url-friendly version for the category.
+    -
+      plugin: machine_name
   # Specify the alias which should point to the "source" specified above.
   #
   # If you don't know what aliases are this tutorial might not be for you. Please read about the "path" module to
@@ -72,8 +81,9 @@ process:
     plugin: concat
     source:
       - constants/alias_prefix
+      - @temp_category_slug
+      - constants/slash
       - slug
-      - constants/alias_suffix
   # All URL aliases need to specify a language.
   #
   # In our case, we simply hard-code it to "und" as in "Undefined". This is important! A value must be provided for
@@ -83,3 +93,4 @@ process:
 migration_dependencies:
   required:
     - example_article_data
+    - example_category_data
