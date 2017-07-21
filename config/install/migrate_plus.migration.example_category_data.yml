@@ -7,7 +7,7 @@ id: example_category_data
 title: Category data
 migration_group: example_article
 migration_tags:
-  - blog
+  - taxonomy-term
   - category
   # This tag will be used for computing the source CSV path.
   - migrate-example-paths

@@ -8,13 +8,13 @@ title: Article data
 migration_group: example_article
 migration_tags:
   - node
-  - blog
+  - article
   # This tag will be used for computing the source CSV path.
   - migrate-example-paths
 # Migration source
 source:
   plugin: csv
-  path: blog.csv
+  path: article.csv
   header_row_count: 1
   # "slug" is the only unique identifier in the source CSV.
   keys:
@@ -45,6 +45,6 @@ process:
     migration: example_category_data
     no_stub: true
 # Migration dependencies
-migration_depedencies:
+migration_dependencies:
   required:
     - example_category_data

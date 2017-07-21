@@ -14,6 +14,7 @@ title: Article redirects
 migration_group: example_article
 migration_tags:
   - redirect
+  - article
   # This tag will be used for computing the source CSV path.
   - migrate-example-paths
 # Migration source
@@ -22,7 +23,7 @@ migration_tags:
 # and older version of Drupal, you can use the "d6_path_redirect" plugin provided by the "redirect" module.
 source:
   plugin: csv
-  path: blog.csv
+  path: article.csv
   header_row_count: 1
   # "slug" is the only unique identifier in the source CSV.
   keys:
