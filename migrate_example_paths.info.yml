@@ -1,6 +1,6 @@
 # Package info
-name: Migrate example: Paths
-description: Example module about migrating URL aliases and redirects to Drupal 8.
+name: "Migrate example: Paths"
+description: "Example module about migrating URL aliases and redirects to Drupal 8."
 type: module
 core: 8.x
 package: Example

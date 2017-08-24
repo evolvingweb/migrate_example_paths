@@ -72,7 +72,7 @@ process:
     plugin: concat
     source:
       - constants/redirect_prefix
-      - @temp_nid
+      - "@temp_nid"
   # We want the redirects to be created as if the admin had created them.
   uid: constants/uid_admin
   # We want to generate 301 permanent redirects as opposed to 302 temporary redirects.

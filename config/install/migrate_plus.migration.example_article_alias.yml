@@ -59,7 +59,7 @@ process:
     plugin: concat
     source:
       - constants/source_prefix
-      - @temp_nid
+      - "@temp_nid"
   # Load category data to generate the "category-slug", which is like a URL friendly version of the category name.
   temp_category_slug:
     # First, retrieve the ID of the taxonomy term created during the "category_data" migration.
@@ -82,7 +82,7 @@ process:
     plugin: concat
     source:
       - constants/alias_prefix
-      - @temp_category_slug
+      - "@temp_category_slug"
       - constants/slash
       - slug
   # All URL aliases need to specify a language.

@@ -42,4 +42,4 @@ process:
     plugin: concat
     source:
       - constants/path_prefix
-      - @temp_slug
+      - "@temp_slug"
